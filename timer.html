@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồng hồ thời gian thực - Hà Nội (UTC+7)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #FFFFFD;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .clock {
+            font-size: calc(2rem + 2vw);
+            font-weight: bold;
+            color: #10439F;
+            text-align: center;
+            background-color: #FFFFFD;
+            padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            margin: auto;
+            position: relative;
+        }
+        .analog-clock {
+            display: inline-block;
+            width: 80px; /* Tăng kích thước đồng hồ cho rõ hơn */
+            height: 80px;
+            border: 2px solid #10439F;
+            border-radius: 50%;
+            position: relative;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .hand {
+            position: absolute;
+            width: 45%;
+            height: 2px;
+            background: #FF5733;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 0%; /* Điểm gốc là chính giữa của kim */
+            transform: rotate(90deg);
+            transition: all 0.1s ease-in-out;
+        }
+        .hand.hour {
+            width: 27%; /* Cập nhật độ dài của kim giờ */
+            height: 3px;
+            background: #10439F;
+        }
+        .hand.minute {
+            width: 36%; /* Cập nhật độ dài của kim phút */
+            height: 1.8px;
+            background: #10439F;
+        }
+        .center-circle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #FF5733;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .mark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #10439F;
+            border-radius: 50%;
+            transform-origin: 50% 0%;
+        }
+        .mark:nth-child(1) {
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .mark:nth-child(2) {
+            top: 50%;
+            right: 2px;
+            transform: translateY(-50%);
+        }
+        .mark:nth-child(3) {
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .mark:nth-child(4) {
+            top: 50%;
+            left: 2px;
+            transform: translateY(-50%);
+        }
+        .date {
+            font-size: calc(1rem + 1vw);
+            color: #10439F;
+        }
+    </style>
+</head>
+<body>
+
+<div class="clock" id="clock">
+    <div class="analog-clock">
+        <!-- Vạch chia 15 phút -->
+        <div class="mark"></div> <!-- 12 giờ -->
+        <div class="mark"></div> <!-- 3 giờ -->
+        <div class="mark"></div> <!-- 6 giờ -->
+        <div class="mark"></div> <!-- 9 giờ -->
+
+        <div class="hand hour" id="hour-hand"></div>
+        <div class="hand minute" id="minute-hand"></div>
+        <div class="hand second" id="second-hand"></div>
+        <div class="center-circle"></div>
+    </div>
+    <div class="date">Thứ, Ngày Tháng Năm</div>
+</div>
+
+<script>
+    function updateClock() {
+        var now = new Date();
+        var hours = now.getHours();  // Lấy giờ hiện tại (0 - 23)
+        var minutes = now.getMinutes();  // Lấy phút hiện tại (0 - 59)
+        var seconds = now.getSeconds();  // Lấy giây hiện tại (0 - 59)
+
+        var day = now.toLocaleDateString('vi-VN', { weekday: 'long' });
+        var date = now.toLocaleDateString('vi-VN');
+
+        // Cập nhật ngày tháng
+        document.querySelector('.date').textContent = day + ', ' + date;
+
+        // Tính góc quay cho các kim dựa trên thời gian thực
+        var hoursRotation = (hours % 12) * 30 + (minutes * 0.5); // Mỗi giờ là 30 độ, mỗi phút thêm 0.5 độ
+        var minutesRotation = minutes * 6; // Mỗi phút là 6 độ
+        var secondsRotation = seconds * 6; // Mỗi giây là 6 độ
+
+        // Cập nhật góc quay của các kim
+        document.getElementById('hour-hand').style.transform = `rotate(${hoursRotation - 90}deg)`; // Offset -90 để trùng vị trí 12h
+        document.getElementById('minute-hand').style.transform = `rotate(${minutesRotation - 90}deg)`; // Offset -90 để trùng vị trí 12h
+        document.getElementById('second-hand').style.transform = `rotate(${secondsRotation - 90}deg)`; // Offset -90 để trùng vị trí 12h
+    }
+
+    setInterval(updateClock, 1000);  // Cập nhật mỗi giây
+    updateClock();  // Cập nhật ngay lập tức khi trang tải xong
+</script>
+
+</body>
+</html>
